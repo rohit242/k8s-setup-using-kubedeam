@@ -1,0 +1,27 @@
+Create two ec2 server
+login into the both server
+sudo su -
+sudo apt-get update
+install docker on both node(master & node)    sudo apt-get install docker.io
+sudo apt-get update && sudo apt-get install -y apt-transport-https curl
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -   ...will give ok as output
+cat <<EOF | sudo tee /etc/apt/sources.list.d/kubernetes.list
+deb https://apt.kubernetes.io/ kubernetes-xenial main
+EOF
+update the all node again by apt-get update
+sudo apt-get install -y kubelet kubeadm kubectl
+upto step 12 run on master and slave both
+kubeadm init --apiserver-advertise-address ip of master node --pod-network-cidr=192.168.0.0/16 --ignore-preflight-errors=NumCPU ....run on master to create token
+will get one error regardind cpu so As we know for k8s we require 2 core cpu so to ignore this error use --ignore-preflight-errors=NumCPU   numcpu is error name
+After this command we will one token like docker swarm and we need to run that token on other node to connect as a slave
+kubeadm join 172.31.32.24:6443 --token v53od7.zyvzqnwttoe9z1h6 \
+    --discovery-token-ca-cert-hash sha256:92c7440a1a89f59505ca57354a33c63dc5faf2aab841d6a5e9e3e53d91f3cb66
+    kubectl get nodes ....then we will get error connection port issue so run 
+mkdir -p $HOME/.kube   ....on master
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config  ....onmaster
+sudo chown $(id -u):$(id -g) $HOME/.kube/config  ..onmaster
+after this we will get pods but on in ready state because we have not configure the pod network yet so configure pod by below command
+kubectl apply -f https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/rbac-kdd.yml
+kubectl apply -f https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/kubernetes-datastore/calico-networking/1.7/calico.yaml
+https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/rbac-kdd.yaml
+wget https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/kubernetes-datastore/calico-networking/1.7/calico.yaml

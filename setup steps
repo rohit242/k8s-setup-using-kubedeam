@@ -20,8 +20,12 @@ kubeadm join 172.31.32.24:6443 --token v53od7.zyvzqnwttoe9z1h6 \
 mkdir -p $HOME/.kube   ....on master
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config  ....onmaster
 sudo chown $(id -u):$(id -g) $HOME/.kube/config  ..onmaster
-after this we will get pods but on in ready state because we have not configure the pod network yet so configure pod by below command
+after this we will get pods but on in ready state because we have not configure the pod network yet so configure pod by below command and this below thing will download plugin for the calicopod
 kubectl apply -f https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/rbac-kdd.yml
 kubectl apply -f https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/kubernetes-datastore/calico-networking/1.7/calico.yaml
-https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/rbac-kdd.yaml
-wget https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/kubernetes-datastore/calico-networking/1.7/calico.yaml
+wget or kubectl apply -f https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/rbac-kdd.yaml
+wget or kubectl apply -f https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/kubernetes-datastore/calico-networking/1.7/calico.yaml
+kubectl get nodes ... now show in ready mode .. if not able to see then
+run kubectl get pod --all-namespaces .....if all are up and running then it will show nodes in reday modes otherwise wait forthe time.
+kubeadm join 172.31.40.56:6443 --token pqwzeb.tdxpw2fha9ilibi2 \
+    --discovery-token-ca-cert-hash sha256:ccbd7b04b463aea457a982f02cd4d0df1a9657b4737320c32ac3a0c279c766d0
